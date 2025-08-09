@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Grok 互動流星雨與星雲背景
 // @namespace    http://tampermonkey.net/
-// @version      1.2.9
+// @version      1.5
 // @description  為Grok網頁添加超自然的流星雨背景，滑鼠點擊生成流星，星雲漸層背景，星星閃爍，只顯示在背景
 // @author       Grok
 // @match        https://grok.com/*
@@ -49,28 +49,52 @@
         constructor() {
             this.x = Math.random() * width;
             this.y = Math.random() * height;
-            this.radius = Math.random() * 1 + 0.3; // 調小星星最大大小
-            this.alpha = Math.random() * 0.8 + 0.2; // 調整透明度範圍
-            this.alphaSpeed = Math.random() * 0.08 + 0.05; // 更明顯的閃爍速度
-            this.color = Math.random() > 0.5 ? '#fff' : '#89CFF0'; // 隨機白色或淺藍色
-            this.pulsePhase = Math.random() * Math.PI * 2; // 添加脈衝相位
+            // 增加星星大小隨機範圍 (0.1 ~ 2.0)
+            this.radius = Math.random() * 1.9 + 0.1;
+            this.alpha = 1; // 從最亮開始
+            // 進一步降低閃爍頻率 (0.02 ~ 0.05)
+            this.alphaSpeed = Math.random() * 0.03 + 0.02;
+            // 增加更多星星顏色變化
+            const colors = ['#ffffff', '#87ceeb', '#ffb6c1', '#98fb98', '#dda0dd', '#ffd700', '#00ffff', '#ffff00', '#ffa500', '#ff69b4'];
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.pulsePhase = Math.random() * Math.PI * 2;
+            this.maxAlpha = 0.9;
+            this.minAlpha = 0.4;
         }
         draw() {
+            // 繪製核心亮點
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = this.color.replace('rgb', 'rgba').replace(')', `,${this.alpha})`);
+            ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
             ctx.fill();
-            // 添加星星光暈效果
-            const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 2);
-            gradient.addColorStop(0, this.color.replace('rgb', 'rgba').replace(')', `,${this.alpha * 0.3})`));
+            
+            // 更弱的光暈效果
+            const glowSize = this.radius * 3; // 再減少光暈範圍
+            const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowSize);
+            gradient.addColorStop(0, `rgba(255, 255, 255, ${this.alpha * 0.4})`); // 進一步降低中心亮度
+            gradient.addColorStop(0.5, `rgba(135, 206, 235, ${this.alpha * 0.2})`);
             gradient.addColorStop(1, 'rgba(255,255,255,0)');
             ctx.fillStyle = gradient;
             ctx.fill();
+            
+            // 十字光芒效果（極少出現）
+            if (this.alpha > 0.8 && Math.random() < 0.1) { // 只在最高亮度時10%機率顯示
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.alpha * 0.3})`; // 大幅降低光芒可見度
+                ctx.lineWidth = 0.3; // 更細的光芒
+                ctx.beginPath();
+                ctx.moveTo(this.x - this.radius * 2, this.y); // 再減少光芒長度
+                ctx.lineTo(this.x + this.radius * 2, this.y);
+                ctx.moveTo(this.x, this.y - this.radius * 2);
+                ctx.lineTo(this.x, this.y + this.radius * 2);
+                ctx.stroke();
+            }
         }
         update() {
-            // 使用正弦波創建更規律的脈衝閃爍效果
-            this.pulsePhase += this.alphaSpeed;
-            this.alpha = 0.3 + Math.sin(this.pulsePhase) * 0.7; // 更明顯的閃爍範圍
+            // 更慢的脈衝閃爍
+            this.pulsePhase += this.alphaSpeed * 0.5; // 進一步降低閃爍速度因子
+            const pulse = (Math.sin(this.pulsePhase) + 1) / 2; // 0-1範圍
+            this.alpha = this.minAlpha + pulse * (this.maxAlpha - this.minAlpha);
+            
             this.draw();
         }
     }
@@ -162,8 +186,8 @@
         ctx.fillStyle.addColorStop(1, 'rgba(0, 0, 20, 0.7)');
         ctx.fillRect(0, 0, width, height);
         
-        // 淡化層，保留效果
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
+        // 調低淡化層透明度以增強星星可見度
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.01)';
         ctx.fillRect(0, 0, width, height);
         
         stars.forEach(star => star.update());
