@@ -19,34 +19,18 @@
 
 ## 🚀 安裝指南
 
-### 方法一：Tampermonkey 擴充功能（推薦）
-
 1. **安裝 Tampermonkey**
 
    - Chrome：[Tampermonkey Chrome 商店](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
    - Firefox：[Tampermonkey Firefox 附加元件](https://addons.mozilla.org/firefox/addon/tampermonkey/)
    - Edge：[Tampermonkey Edge 商店](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd)
-2. **安裝腳本**
-
-   - 開啟 [Greasy Fork](https://greasyfork.org/) 或 [OpenUserJS](https://openuserjs.org/)
-   - 搜尋 "Grok 互動流星雨與星雲背景"
-   - 點擊 "安裝腳本"
-3. **手動安裝**
+2. **手動安裝**
 
    - 點擊瀏覽器工具列的 Tampermonkey 圖示
    - 選擇 "管理面板"
    - 點擊 "+" 新增腳本
    - 將 `grok_meteor_shower.js` 的內容貼上
    - 儲存 (Ctrl+S)
-
-### 方法二：Violentmonkey 擴充功能
-
-1. **安裝 Violentmonkey**
-
-   - 從各瀏覽器的擴充功能商店安裝 Violentmonkey
-2. **安裝步驟**
-
-   - 與 Tampermonkey 的步驟相同
 
 ## 🎯 使用說明
 
