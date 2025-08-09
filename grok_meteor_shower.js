@@ -49,10 +49,11 @@
         constructor() {
             this.x = Math.random() * width;
             this.y = Math.random() * height;
-            this.radius = Math.random() * 2 + 0.5; // 增加星星大小
-            this.alpha = Math.random() * 0.95 + 0.05; // 透明度範圍
-            this.alphaSpeed = Math.random() * 0.02 + 0.01; // 調整閃爍速度
+            this.radius = Math.random() * 1 + 0.3; // 調小星星最大大小
+            this.alpha = Math.random() * 0.8 + 0.2; // 調整透明度範圍
+            this.alphaSpeed = Math.random() * 0.08 + 0.05; // 更明顯的閃爍速度
             this.color = Math.random() > 0.5 ? '#fff' : '#89CFF0'; // 隨機白色或淺藍色
+            this.pulsePhase = Math.random() * Math.PI * 2; // 添加脈衝相位
         }
         draw() {
             ctx.beginPath();
@@ -67,9 +68,9 @@
             ctx.fill();
         }
         update() {
-            this.alpha += this.alphaSpeed * (Math.random() > 0.5 ? 1 : -1);
-            if (this.alpha > 1) this.alpha = 1;
-            if (this.alpha < 0.05) this.alpha = 0.05;
+            // 使用正弦波創建更規律的脈衝閃爍效果
+            this.pulsePhase += this.alphaSpeed;
+            this.alpha = 0.3 + Math.sin(this.pulsePhase) * 0.7; // 更明顯的閃爍範圍
             this.draw();
         }
     }
